@@ -42,7 +42,11 @@
 //! The structs exposed by this crate are largely implementation details exposed in the hope that they may be useful.  
 //! For most purposes, simply calling [`detach`] will be enough.
 
-use {serde::de, std::marker::PhantomData, wyz::Pipe as _};
+use {
+    serde::{de, serde_if_integer128},
+    std::marker::PhantomData,
+    wyz::Pipe as _,
+};
 
 /// Gently nudges the compiler into deserialising as [`Detach<T>`] and unwraps it.
 pub fn detach<T>(detach: Detach<T>) -> T {
@@ -103,13 +107,11 @@ impl<'de, D: de::Deserializer<'de>> de::Deserializer<'static> for Deserializer<'
         deserialize_i16,
         deserialize_i32,
         deserialize_i64,
-        deserialize_i128,
 
         deserialize_u8,
         deserialize_u16,
         deserialize_u32,
         deserialize_u64,
-        deserialize_u128,
 
         deserialize_f32,
         deserialize_f64,
@@ -135,6 +137,11 @@ impl<'de, D: de::Deserializer<'de>> de::Deserializer<'static> for Deserializer<'
         deserialize_identifier,
         deserialize_ignored_any,
     }
+
+    serde_if_integer128!(deserialize! {
+        deserialize_i128,
+        deserialize_u128,
+    });
 
     fn is_human_readable(&self) -> bool {
         self.0.is_human_readable()
@@ -174,13 +181,11 @@ impl<'de, V: de::Visitor<'static>> de::Visitor<'de> for Visitor<V> {
         visit_i16(i16),
         visit_i32(i32),
         visit_i64(i64),
-        visit_i128(i128),
 
         visit_u8(u8),
         visit_u16(u16),
         visit_u32(u32),
         visit_u64(u64),
-        visit_u128(u128),
 
         visit_f32(f32),
         visit_f64(f64),
@@ -204,6 +209,11 @@ impl<'de, V: de::Visitor<'static>> de::Visitor<'de> for Visitor<V> {
         visit_map(T | MapAccess::new) / ::Error where T: de::MapAccess<'de>,
         visit_enum(T | EnumAccess::new) / ::Error where T: de::EnumAccess<'de>,
     }
+
+    serde_if_integer128!(visit! {
+        visit_i128(i128),
+        visit_u128(u128),
+    });
 }
 
 pub struct SeqAccess<'de, A: de::SeqAccess<'de>>(A, PhantomData<&'de ()>);
