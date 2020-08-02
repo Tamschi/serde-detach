@@ -10,3 +10,8 @@ publish = false
 [dependencies]
 serde = "1.0.114"
 wyz = "0.2.0"
+
+[dev-dependencies]
+serde = { version = "*", features = ["derive"] }
+serde-any = { path = "../serde-any" }
+taml = { path = "../taml", default-features = false }
