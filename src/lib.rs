@@ -10,7 +10,7 @@
 //!
 //! ```rust no_run
 //! use {
-//!     serde_any::Object,
+//!     serde_object::Object,
 //!     serde_detach::detach,
 //!     taml::deserializer::from_str,
 //! };
@@ -20,7 +20,7 @@
 //!
 //! This does not compile, since [`Object`] tries to borrow from the input:
 //! ```rust compile_fail startline=8
-//! # use {serde_any::Object, serde_detach::detach, taml::deserializer::from_str};
+//! # use {serde_object::Object, serde_detach::detach, taml::deserializer::from_str};
 //! # let input = "key: \"value\"".to_string();
 //! let object: Object<'static> = from_str(&input, &mut ())?;
 //! //          ---------------            ^^^^^^ borrowed value does not live long enough
@@ -31,7 +31,7 @@
 //!
 //! This works:
 //! ```rust startline=8
-//! # use {serde_any::Object, serde_detach::detach, taml::deserializer::from_str};
+//! # use {serde_object::Object, serde_detach::detach, taml::deserializer::from_str};
 //! # let input = "key: \"value\"".to_string();
 //! let object: Object<'static> = from_str(&input, &mut ()).map(detach)?;
 //! # Ok::<_, taml::deserializer::Error>(())

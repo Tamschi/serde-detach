@@ -13,5 +13,5 @@ wyz = "0.2.0"
 
 [dev-dependencies]
 serde = { version = "*", features = ["derive"] }
-serde-any = { path = "../serde-any" }
+serde-object = { path = "../serde-object" }
 taml = { path = "../taml", default-features = false }
