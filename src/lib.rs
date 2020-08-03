@@ -36,11 +36,6 @@
 //! let object: Object<'static> = from_str(&input, &mut ()).map(detach)?;
 //! # Ok::<_, taml::deserializer::Error>(())
 //! ```
-//!
-//! # Note
-//!
-//! The structs exposed by this crate are largely implementation details exposed in the hope that they may be useful.  
-//! For most purposes, simply calling [`detach`] will be enough.
 
 use {
     serde::{de, serde_if_integer128},
@@ -53,8 +48,9 @@ pub fn detach<T>(detach: Detach<T>) -> T {
     detach.0
 }
 
+/// A [`de::DeserializeOwned`] wrapper around any [`de::Deserialize<'de>`].
 #[derive(Debug)]
-pub struct Detach<T>(pub T);
+pub struct Detach<T>(T);
 
 impl<'de, T: de::Deserialize<'static>> de::Deserialize<'de> for Detach<T> {
     fn deserialize<D>(
@@ -67,6 +63,8 @@ impl<'de, T: de::Deserialize<'static>> de::Deserialize<'de> for Detach<T> {
     }
 }
 
+/// A [`de::Deserializer<'static>`] wrapper around any [`de::Deserializer<'de>`].
+#[derive(Debug)]
 pub struct Deserializer<'de, D: de::Deserializer<'de>>(D, PhantomData<&'de ()>);
 impl<'de, D: de::Deserializer<'de>> Deserializer<'de, D> {
     pub fn new(deserializer: D) -> Self {
@@ -148,7 +146,7 @@ impl<'de, D: de::Deserializer<'de>> de::Deserializer<'static> for Deserializer<'
     }
 }
 
-pub struct Visitor<V: de::Visitor<'static>>(pub V);
+struct Visitor<V: de::Visitor<'static>>(V);
 
 macro_rules! visit {
     ($($visit_:ident(
@@ -216,19 +214,10 @@ impl<'de, V: de::Visitor<'static>> de::Visitor<'de> for Visitor<V> {
     });
 }
 
-pub struct SeqAccess<'de, A: de::SeqAccess<'de>>(A, PhantomData<&'de ()>);
+struct SeqAccess<'de, A: de::SeqAccess<'de>>(A, PhantomData<&'de ()>);
 impl<'de, A: de::SeqAccess<'de>> SeqAccess<'de, A> {
-    pub fn new(access: A) -> Self {
+    fn new(access: A) -> Self {
         Self(access, PhantomData)
-    }
-    pub fn inner(&self) -> &A {
-        &self.0
-    }
-    pub fn inner_mut(&mut self) -> &mut A {
-        &mut self.0
-    }
-    pub fn into_inner(self) -> A {
-        self.0
     }
 }
 impl<'de, A: de::SeqAccess<'de>> de::SeqAccess<'static> for SeqAccess<'de, A> {
@@ -244,19 +233,10 @@ impl<'de, A: de::SeqAccess<'de>> de::SeqAccess<'static> for SeqAccess<'de, A> {
     }
 }
 
-pub struct MapAccess<'de, A: de::MapAccess<'de>>(A, PhantomData<&'de ()>);
+struct MapAccess<'de, A: de::MapAccess<'de>>(A, PhantomData<&'de ()>);
 impl<'de, A: de::MapAccess<'de>> MapAccess<'de, A> {
-    pub fn new(access: A) -> Self {
+    fn new(access: A) -> Self {
         Self(access, PhantomData)
-    }
-    pub fn inner(&self) -> &A {
-        &self.0
-    }
-    pub fn inner_mut(&mut self) -> &mut A {
-        &mut self.0
-    }
-    pub fn into_inner(self) -> A {
-        self.0
     }
 }
 impl<'de, A: de::MapAccess<'de>> de::MapAccess<'static> for MapAccess<'de, A> {
@@ -290,19 +270,10 @@ impl<'de, A: de::MapAccess<'de>> de::MapAccess<'static> for MapAccess<'de, A> {
     }
 }
 
-pub struct EnumAccess<'de, A: de::EnumAccess<'de>>(A, PhantomData<&'de ()>);
+struct EnumAccess<'de, A: de::EnumAccess<'de>>(A, PhantomData<&'de ()>);
 impl<'de, A: de::EnumAccess<'de>> EnumAccess<'de, A> {
-    pub fn new(access: A) -> Self {
+    fn new(access: A) -> Self {
         Self(access, PhantomData)
-    }
-    pub fn inner(&self) -> &A {
-        &self.0
-    }
-    pub fn inner_mut(&mut self) -> &mut A {
-        &mut self.0
-    }
-    pub fn into_inner(self) -> A {
-        self.0
     }
 }
 impl<'de, A: de::EnumAccess<'de>> de::EnumAccess<'static> for EnumAccess<'de, A> {
@@ -318,19 +289,10 @@ impl<'de, A: de::EnumAccess<'de>> de::EnumAccess<'static> for EnumAccess<'de, A>
     }
 }
 
-pub struct VariantAccess<'de, A: de::VariantAccess<'de>>(A, PhantomData<&'de ()>);
+struct VariantAccess<'de, A: de::VariantAccess<'de>>(A, PhantomData<&'de ()>);
 impl<'de, A: de::VariantAccess<'de>> VariantAccess<'de, A> {
-    pub fn new(access: A) -> Self {
+    fn new(access: A) -> Self {
         Self(access, PhantomData)
-    }
-    pub fn inner(&self) -> &A {
-        &self.0
-    }
-    pub fn inner_mut(&mut self) -> &mut A {
-        &mut self.0
-    }
-    pub fn into_inner(self) -> A {
-        self.0
     }
 }
 impl<'de, A: de::VariantAccess<'de>> de::VariantAccess<'static> for VariantAccess<'de, A> {
@@ -362,7 +324,7 @@ impl<'de, A: de::VariantAccess<'de>> de::VariantAccess<'static> for VariantAcces
     }
 }
 
-pub struct Seed<S: de::DeserializeSeed<'static>>(S);
+struct Seed<S: de::DeserializeSeed<'static>>(S);
 impl<'de, S: de::DeserializeSeed<'static>> de::DeserializeSeed<'de> for Seed<S> {
     type Value = S::Value;
     fn deserialize<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
