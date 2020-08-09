@@ -1,6 +1,6 @@
 [package]
 name = "serde-detach"
-version = "0.0.0-dev"
+version = "0.0.0-alpha.0"
 authors = ["Tamme Schichler <tamme@schichler.dev>"]
 edition = "2018"
 publish = false
