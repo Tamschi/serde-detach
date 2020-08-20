@@ -61,6 +61,13 @@ impl<'de, T: de::Deserialize<'static>> de::Deserialize<'de> for Detach<T> {
     {
         T::deserialize(Deserializer::new(deserializer)).map(Detach)
     }
+
+    fn deserialize_in_place<D>(deserializer: D, place: &mut Self) -> Result<(), D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        T::deserialize_in_place(Deserializer::new(deserializer), &mut place.0)
+    }
 }
 
 /// A [`de::Deserializer<'static>`] wrapper around any [`de::Deserializer<'de>`].
