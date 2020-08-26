@@ -10,7 +10,6 @@ include = [
 	"**/*.rs",
 	"Cargo.toml",
 ]
-publish = false
 
 [dependencies]
 serde = "1.0.114"
