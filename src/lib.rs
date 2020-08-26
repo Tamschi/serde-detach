@@ -10,9 +10,9 @@
 //!
 //! ```rust no_run
 //! use {
-//!     serde_object::Object,
 //!     serde_detach::detach,
-//!     taml::deserializer::from_str,
+//!     serde_object::Object,
+//!     serde_taml::de::from_str,
 //! };
 //!
 //! let input = "key: \"value\"".to_string();
@@ -20,21 +20,21 @@
 //!
 //! This does not compile, since [`Object`] tries to borrow from the input:
 //! ```rust compile_fail startline=8
-//! # use {serde_object::Object, serde_detach::detach, taml::deserializer::from_str};
+//! # use {serde_detach::detach, serde_object::Object, serde_taml::de::from_str};
 //! # let input = "key: \"value\"".to_string();
 //! let object: Object<'static> = from_str(&input, &mut ())?;
 //! //          ---------------            ^^^^^^ borrowed value does not live long enough
 //! //          |
 //! //          type annotation requires that `input` is borrowed for `'static`
-//! # Ok::<_, taml::deserializer::Error>(())
+//! # Ok::<_, serde_taml::de::Error>(())
 //! ```
 //!
 //! This works:
 //! ```rust startline=8
-//! # use {serde_object::Object, serde_detach::detach, taml::deserializer::from_str};
+//! # use {serde_detach::detach, serde_object::Object, serde_taml::de::from_str};
 //! # let input = "key: \"value\"".to_string();
 //! let object: Object<'static> = from_str(&input, &mut ()).map(detach)?;
-//! # Ok::<_, taml::deserializer::Error>(())
+//! # Ok::<_, serde_taml::de::Error>(())
 //! ```
 
 use serde::{de, serde_if_integer128};
