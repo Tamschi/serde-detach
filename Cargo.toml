@@ -13,10 +13,10 @@ include = [
 publish = false
 
 [dependencies]
-serde = "1.0.114"
+serde = "1.0.115"
 wyz = "0.2.0"
 
 [dev-dependencies]
-serde = { version = "*", features = ["derive"] }
+serde = { version = "1.0.115", features = ["derive"] }
 serde_taml = "0.0.1"
 serde-object = "0.0.0-alpha.0"
